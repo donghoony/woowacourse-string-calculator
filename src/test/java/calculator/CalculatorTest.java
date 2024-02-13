@@ -3,54 +3,44 @@ package calculator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import calculator.exception.IllegalValueContainedException;
+import calculator.exception.ContainingNegativeException;
+import calculator.parser.ExpressionParser;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class CalculatorTest {
 
-    static Stream<Arguments> generateValidArguments() {
-        return Stream.of(Arguments.of(List.of(1, 2, 3, 4, 5)), Arguments.of(List.of(0, 0, 0, 0, 0)),
-                Arguments.of(List.of()));
-    }
-
-    static Stream<Arguments> generateInvalidArguments() {
-        return Stream.of(Arguments.of(List.of(1, 2, 3, 4, -5)), Arguments.of(List.of(-1, -2, -3, -4, -5)),
-                Arguments.of(List.of(-1, 2, 3, 4, 5)), Arguments.of(List.of(-5)));
-    }
-
-    @ParameterizedTest
-    @MethodSource("generateValidArguments")
-    @DisplayName("주어진 정수가 올바른 범위인 경우, 정상적으로 생성된다.")
-    void initTest(List<Integer> numbers) {
-        Assertions.assertDoesNotThrow(() -> new Calculator(numbers));
-    }
+    ExpressionParser parser = new ExpressionParser() {
+        @Override
+        public List<Integer> parse(String expression) {
+            return Arrays.stream(expression.split(","))
+                    .map(Integer::parseInt)
+                    .toList();
+        }
+    };
 
     @ParameterizedTest
-    @MethodSource("generateInvalidArguments")
-    @DisplayName("주어진 정수가 음수를 포함하는 경우, 예외를 발생한다.")
-    void illegalValueInitTest(List<Integer> numbers) {
-        assertThatThrownBy(() -> new Calculator(numbers))
-                .isInstanceOf(IllegalValueContainedException.class);
-    }
-
-    @ParameterizedTest
-    @MethodSource("generateValidArguments")
-    @DisplayName("주어진 정수들의 합을 정상적으로 반환한다.")
-    void calculateSumTest(List<Integer> numbers) {
-        // given
-        Calculator calculator = new Calculator(numbers);
-        int expected = numbers.stream().reduce(0, Integer::sum);
-
-        // when
-        int actual = calculator.calculateSum();
-
-        // then
+    @ValueSource(strings = {"1,2,3", "1,2,3,4,5"})
+    @DisplayName("주어진 정수가 올바른 범위인 경우, 정상적으로 결과를 도출한다.")
+    void initTest(String expression) {
+        Calculator calculator = new Calculator(parser);
+        int actual = calculator.calculateSum(expression);
+        int expected = Arrays.stream(expression.split(","))
+                .map(Integer::parseInt)
+                .reduce(0, Integer::sum);
         assertThat(actual).isEqualTo(expected);
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"1,2,3,-4,5", "-1,2,3,4,5"})
+    @DisplayName("주어진 정수가 음수를 포함하는 경우, 예외를 발생한다.")
+    void illegalValueInitTest(String expression) {
+        Calculator calculator = new Calculator(parser);
+        assertThatThrownBy(() -> calculator.calculateSum(expression))
+                .isInstanceOf(ContainingNegativeException.class);
+    }
+
 }

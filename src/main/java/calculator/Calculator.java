@@ -1,28 +1,27 @@
 package calculator;
 
-import calculator.exception.IllegalValueContainedException;
+import calculator.exception.ContainingNegativeException;
+import calculator.parser.ExpressionParser;
 import java.util.List;
 
 public class Calculator {
-    private final List<Integer> numbers;
+    private final ExpressionParser expressionParser;
 
-    public Calculator(List<Integer> numbers) {
-        validateNumbers(numbers);
-        this.numbers = numbers;
+    public Calculator(ExpressionParser expressionParser) {
+        this.expressionParser = expressionParser;
     }
 
-    public int calculateSum() {
-        return numbers.stream().reduce(0, Integer::sum);
+    public int calculateSum(String expression) {
+        List<Integer> parsedNumbers = expressionParser.parse(expression);
+        validateNonNegative(parsedNumbers);
+
+        return parsedNumbers.stream()
+                .reduce(0, Integer::sum);
     }
 
-    private void validateNumbers(List<Integer> numbers) {
-        if (hasNegativeInteger(numbers)) {
-            throw new IllegalValueContainedException();
+    private void validateNonNegative(List<Integer> numbers) {
+        if (numbers.stream().anyMatch(number -> number < 0)) {
+            throw new ContainingNegativeException();
         }
     }
-
-    private boolean hasNegativeInteger(List<Integer> numbers) {
-        return numbers.stream().anyMatch(number -> number < 0);
-    }
-
 }
