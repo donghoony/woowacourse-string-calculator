@@ -6,21 +6,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import calculator.exception.ContainingNegativeException;
 import calculator.parser.ExpressionParser;
 import java.util.Arrays;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class CalculatorTest {
 
-    ExpressionParser parser = new ExpressionParser() {
-        @Override
-        public List<Integer> parse(String expression) {
-            return Arrays.stream(expression.split(","))
-                    .map(Integer::parseInt)
-                    .toList();
-        }
-    };
+    ExpressionParser parser = expression -> Arrays.stream(expression.split(","))
+            .map(Integer::parseInt)
+            .toList();
 
     @ParameterizedTest
     @ValueSource(strings = {"1,2,3", "1,2,3,4,5"})
