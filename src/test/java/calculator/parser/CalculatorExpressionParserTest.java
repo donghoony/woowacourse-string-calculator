@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class ParserTest {
+class CalculatorExpressionParserTest {
 
     @Test
     @DisplayName("기본 구분자로 문자열을 올바르게 파싱한다.")
     void defaultDelimiterTest() {
         // given
-        Parser parser = new Parser();
+        CalculatorExpressionParser parser = new CalculatorExpressionParser();
         // when
         List<Integer> parsed = parser.parse("1,2,3:4");
         // then
@@ -35,7 +35,7 @@ class ParserTest {
     @DisplayName("잘못된 문자열을 파싱하는 경우, 예외를 발생한다.")
     void illegalParseTest(String input) {
         // given
-        Parser parser = new Parser();
+        CalculatorExpressionParser parser = new CalculatorExpressionParser();
         // when
         assertThatThrownBy(() -> parser.parse(input))
                 .isInstanceOf(CalculatorException.class);
@@ -45,7 +45,7 @@ class ParserTest {
     @DisplayName("커스텀 구분자로 문자열을 올바르게 파싱한다.")
     void customDelimiterTest() {
         // given
-        Parser parser = new Parser("-");
+        CalculatorExpressionParser parser = new CalculatorExpressionParser("-");
         List<Integer> parsed = parser.parse("1:2-3,4");
         // when
         assertThat(parsed).containsExactly(1, 2, 3, 4);
@@ -56,7 +56,7 @@ class ParserTest {
     @ValueSource(strings = {"1", "ab", "", "::", "-----"})
     @DisplayName("올바르지 않은 커스텀 구분자를 사용하는 경우, 예외를 발생한다.")
     void illegalDelimiterTest(String delimiter) {
-        assertThatThrownBy(() -> new Parser(delimiter))
+        assertThatThrownBy(() -> new CalculatorExpressionParser(delimiter))
                 .isInstanceOf(CalculatorException.class);
     }
 }

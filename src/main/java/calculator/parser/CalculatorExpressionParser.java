@@ -6,17 +6,17 @@ import calculator.exception.IllegalDelimiterLengthException;
 import java.util.Arrays;
 import java.util.List;
 
-public class Parser {
+public class CalculatorExpressionParser implements ExpressionParser {
     private static final List<String> DEFAULT_DELIMITERS = List.of(":", ",");
     private static final int DELIMITER_LENGTH = 1;
 
     private final String customDelimiter;
 
-    public Parser() {
+    public CalculatorExpressionParser() {
         this.customDelimiter = "";
     }
 
-    public Parser(String customDelimiter) {
+    public CalculatorExpressionParser(String customDelimiter) {
         validateCustomDelimiter(customDelimiter);
         this.customDelimiter = customDelimiter;
     }
