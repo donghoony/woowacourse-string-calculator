@@ -34,6 +34,9 @@ public class CalculatorExpressionParser implements ExpressionParser {
     }
 
     private void validateContainingOnlyDigits(String input) {
+        if (input.isEmpty()) {
+            throw new ContainingNonDigitException();
+        }
         for (char c : input.toCharArray()) {
             if (!Character.isDigit(c)) {
                 throw new ContainingNonDigitException();
@@ -56,7 +59,7 @@ public class CalculatorExpressionParser implements ExpressionParser {
     }
 
     private void validateLength(String customDelimiter) {
-        if (customDelimiter.length() > MAX_DELIMITER_LENGTH) {
+        if (customDelimiter.length() != MAX_DELIMITER_LENGTH) {
             throw new IllegalDelimiterLengthException();
         }
     }
