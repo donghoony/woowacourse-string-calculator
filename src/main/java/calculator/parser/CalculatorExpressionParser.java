@@ -22,6 +22,10 @@ public class CalculatorExpressionParser implements ExpressionParser {
     }
 
     public List<Integer> parse(String input) {
+        if (input == null || input.isEmpty()) {
+            return List.of();
+        }
+
         List<String> split = splitByDelimiters(input);
         split.forEach(this::validateContainingOnlyDigits);
         return split.stream()
@@ -30,9 +34,6 @@ public class CalculatorExpressionParser implements ExpressionParser {
     }
 
     private void validateContainingOnlyDigits(String input) {
-        if (input.isEmpty()) {
-            throw new ContainingNonDigitException();
-        }
         for (char c : input.toCharArray()) {
             if (!Character.isDigit(c)) {
                 throw new ContainingNonDigitException();
