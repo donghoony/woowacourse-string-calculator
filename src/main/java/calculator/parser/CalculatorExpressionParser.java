@@ -8,7 +8,7 @@ import java.util.List;
 
 public class CalculatorExpressionParser implements ExpressionParser {
     private static final List<String> DEFAULT_DELIMITERS = List.of(":", ",");
-    private static final int DELIMITER_LENGTH = 1;
+    private static final int MAX_DELIMITER_LENGTH = 1;
 
     private final String customDelimiter;
 
@@ -55,7 +55,7 @@ public class CalculatorExpressionParser implements ExpressionParser {
     }
 
     private void validateLength(String customDelimiter) {
-        if (customDelimiter.length() != DELIMITER_LENGTH) {
+        if (customDelimiter.length() > MAX_DELIMITER_LENGTH) {
             throw new IllegalDelimiterLengthException();
         }
     }
